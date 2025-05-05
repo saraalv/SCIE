@@ -88,13 +88,14 @@ aurora.subset <- aurora_eset[,!colnames(aurora_eset) %in% outl_aur]
 counts.CPM <- cpm(tcga.subset)
 thresh <- counts.CPM >0.5
 keep <- rowSums(thresh) >=2
-counts.keep.tcga <- tcga_eset[keep,]
+counts.keep.tcga <- tcga.subset[keep,]
 
 # AURORA
 counts.CPM <- cpm(aurora.subset)
 thresh <- counts.CPM >0.5
 keep <- rowSums(thresh) >=2
-counts.keep.aur <- aurora_eset[keep,]
+counts.keep.aur <- aurora.subset[keep,]
+
 
 
 ## -----------------------------------------------------------
@@ -108,6 +109,17 @@ tcga_data <- cpm(dge_norm)
 dge.aur <- DGEList(counts.keep.aur)
 dge_norm <- calcNormFactors(dge.aur)
 aurora_data <- cpm(dge_norm)
+
+## --------------------------------------------------------------
+# 4. Filtraje de las muestras en los metadatos
+## --------------------------------------------------------------
+
+aurora_data <- aurora_data[, colnames(aurora_data) %in% clin$BCR.Portion.barcode]
+clin <- clin[clin$BCR.Portion.barcode %in% colnames(aurora_data),]
+
+tcga_data <- tcga_data[, colnames(tcga_data) %in% tcga_metadata$barcode]
+tcga_metadata <- tcga_metadata[tcga_metadata$barcode %in% colnames(tcga_data), ]
+
 
 # guardamos los datos 
 aurora_metadata <- clin
