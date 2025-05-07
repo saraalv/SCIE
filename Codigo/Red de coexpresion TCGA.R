@@ -17,13 +17,12 @@ load(file = "C:/Users/Suruxx/Documents/TFM/data/tcga_dataset.RData")
 # 1. Elección del umbral 
 ## -------------------------------------------------------------------------
 
-power <- c(c(1:10), seq(from = 12, to = 50, by = 2))
+power <- c(c(1:10), seq(from = 12, to = 30))
 
 # utilizamos la funcion pickSoftThreshold del paquete WGCNA
 # que analiza la similitud con una red topologica 
 
-tcga_data <- t(tcga_data)
-sft <- pickSoftThreshold(tcga_data,
+sft <- pickSoftThreshold(t(tcga_data),
                          powerVector = power,
                          networkType = "signed",
                          verbose = 5)
@@ -38,8 +37,8 @@ sft.data <- sft$fitIndices
 a1 <- ggplot(sft.data, aes(Power, SFT.R.sq, label = Power)) +
   geom_point() +
   geom_text(nudge_y = 0.1) +
-  geom_hline(yintercept = 0.90, color = 'red') +
-  labs(x = 'Power', y = 'Scale free topology model fit, signed R^2') +
+  geom_hline(yintercept = 0.80, color = 'red') +
+  labs(x = 'Power', y = 'Scale free topology model fit, signed R^2', main = "TCGA Data") +
   theme_classic()
 
 ## y una conectividad media baja
@@ -58,11 +57,11 @@ grid.arrange(a1, a2, nrow = 2)
 ## -------------------------------------------------------------------------
 
 
-umbral <- 7
+umbral <- 6
 temp_cor <- cor
 cor <- WGCNA::cor
 
-bwnet <- blockwiseModules(tcga_data,
+bwnet <- blockwiseModules(t(tcga_data),
                           maxBlockSize = 10000,
                           TOMType = "signed",
                           power = umbral,
@@ -72,7 +71,7 @@ bwnet <- blockwiseModules(tcga_data,
                           verbose = 3)
 cor <- temp_cor
 
-save(bwnet, file = "C:/Users/Suruxx/Documents/TFM/data/red.RData")
+save(bwnet, file = "C:/Users/Suruxx/Documents/TFM/data/red6.RData")
 
 
 ## obtenemos el eigengene de cada módulo 
@@ -92,7 +91,7 @@ plotDendroAndColors(bwnet$dendrograms[[1]],
                       addGuide = TRUE,
                       hang= 0.03,
                       guideHang = 0.05,
-                    main = "Cluster Dendogram block 1")
+                    main = "Cluster Dendogram block 1 TCGA")
 
 plotDendroAndColors(bwnet$dendrograms[[2]], 
                           cbind(bwnet$unmergedColors[bwnet$blockGenes[[2]]], bwnet$colors[bwnet$blockGenes[[2]]]),
@@ -101,7 +100,7 @@ plotDendroAndColors(bwnet$dendrograms[[2]],
                           addGuide = TRUE,
                           hang= 0.03,
                           guideHang = 0.05,
-                    main = "Cluster Dendogram block 2")
+                    main = "Cluster Dendogram block 2 TCGA")
 
 plotDendroAndColors(bwnet$dendrograms[[3]], 
                           cbind(bwnet$unmergedColors[bwnet$blockGenes[[3]]], bwnet$colors[bwnet$blockGenes[[3]]]),
@@ -110,7 +109,7 @@ plotDendroAndColors(bwnet$dendrograms[[3]],
                           addGuide = TRUE,
                           hang= 0.03,
                           guideHang = 0.05,
-                    main = "Cluster Dendogram block 3")
+                    main = "Cluster Dendogram block 3 TCGA")
 plotDendroAndColors(bwnet$dendrograms[[4]], 
                           cbind(bwnet$unmergedColors[bwnet$blockGenes[[4]]], bwnet$colors[bwnet$blockGenes[[4]]]),
                           c("unmerged", "merged"),
@@ -118,7 +117,7 @@ plotDendroAndColors(bwnet$dendrograms[[4]],
                           addGuide = TRUE,
                           hang= 0.03,
                           guideHang = 0.05,
-                    main = "Cluster Dendogram block 4")
+                    main = "Cluster Dendogram block 4 TCGA")
 plotDendroAndColors(bwnet$dendrograms[[5]], 
                           cbind(bwnet$unmergedColors[bwnet$blockGenes[[5]]], bwnet$colors[bwnet$blockGenes[[5]]]),
                           c("unmerged", "merged"),
@@ -126,7 +125,7 @@ plotDendroAndColors(bwnet$dendrograms[[5]],
                           addGuide = TRUE,
                           hang= 0.03,
                           guideHang = 0.05,
-                    main = "Cluster Dendogram block 5")
+                    main = "Cluster Dendogram block 5 TCGA")
 
 
 
@@ -187,60 +186,61 @@ gsvapar <- gsvaParam(tcga_data, firmas)
 gsva_tcga <- gsva(gsvapar, verbose = FALSE)
 
 ## obtenemos los datos de expresión por cada módulo
+
 expr_black <- tcga_data[subset(modules_df$gene_id, modules_df$module == "black"),]
 expr_blue <- tcga_data[subset(modules_df$gene_id, modules_df$module == "blue"),]
 expr_brown <- tcga_data[subset(modules_df$gene_id, modules_df$module == "brown"),]
+expr_darkturquoise <- tcga_data[subset(modules_df$gene_id, modules_df$module == "darkturquoise"),]
+expr_greenyellow <- tcga_data[subset(modules_df$gene_id, modules_df$module == "greenyellow"),]
 expr_magenta <- tcga_data[subset(modules_df$gene_id, modules_df$module == "magenta"),]
-expr_cyan <- tcga_data[subset(modules_df$gene_id, modules_df$module == "cyan"),]
-expr_pink <- tcga_data[subset(modules_df$gene_id, modules_df$module == "pink"),]
 expr_saddlebrown <- tcga_data[subset(modules_df$gene_id, modules_df$module == "saddlebrown"),]
-expr_violet <- tcga_data[subset(modules_df$gene_id, modules_df$module == "violet"),]
+
 
 
 # se repiten los siguientes pasos para cada módulo: 
 
 ## calculamos la media de expresión por muestra 
-score_violet <- colMeans(expr_violet)
+score_brown <- colMeans(expr_brown)
 
 ## Nos aseguramos que las muestras coincidan 
-common_samples <- intersect(names(score_violet), colnames(gsva_tcga))
+common_samples <- intersect(names(score_brown), colnames(gsva_tcga))
 
 ## calculamos la correlación con cada firma 
-cor_isds_violet <- cor.test(score_violet[common_samples], gsva_tcga["ISDS", common_samples])
-cor_mp17_violet <- cor.test(score_violet[common_samples], gsva_tcga["MP17", common_samples])
-cor_mp18_violet <- cor.test(score_violet[common_samples], gsva_tcga["MP18", common_samples])
-cor_kegg_violet <- cor.test(score_violet[common_samples], gsva_tcga["KEGG", common_samples])
+cor_isds_brown <- cor.test(score_brown[common_samples], gsva_tcga["ISDS", common_samples])
+cor_mp17_brown <- cor.test(score_brown[common_samples], gsva_tcga["MP17", common_samples])
+cor_mp18_brown <- cor.test(score_brown[common_samples], gsva_tcga["MP18", common_samples])
+cor_kegg_brown <- cor.test(score_brown[common_samples], gsva_tcga["KEGG", common_samples])
 
-cor_assou_violet <- cor.test(score_violet[common_samples], gsva_tcga["assou", common_samples])
-cor_wong_violet <- cor.test(score_violet[common_samples], gsva_tcga["wong", common_samples])
-cor_plurinet_violet <- cor.test(score_violet[common_samples], gsva_tcga["plurinet", common_samples])
-cor_benporath_violet <- cor.test(score_violet[common_samples], gsva_tcga["benporath", common_samples])
+cor_assou_brown <- cor.test(score_brown[common_samples], gsva_tcga["assou", common_samples])
+cor_wong_brown <- cor.test(score_brown[common_samples], gsva_tcga["wong", common_samples])
+cor_plurinet_brown <- cor.test(score_brown[common_samples], gsva_tcga["plurinet", common_samples])
+cor_benporath_brown <- cor.test(score_brown[common_samples], gsva_tcga["benporath", common_samples])
 
 
 ## Matriz y heatmap 
 
-ord_violet <- order(score_violet, decreasing = TRUE)
-mat_violet <- rbind(
-  ISDS = gsva_tcga["ISDS", ord_violet],
-  MP17  = gsva_tcga["MP17", ord_violet],
-  MP18  = gsva_tcga["MP18", ord_violet],
-  KEGG  = gsva_tcga["KEGG", ord_violet],
-  assou  = gsva_tcga["assou", ord_violet],
-  wong  = gsva_tcga["wong", ord_violet],
-  plurinet  = gsva_tcga["plurinet", ord_violet],
-  benporath  = gsva_tcga["benporath", ord_violet]
+ord_brown <- order(score_brown, decreasing = TRUE)
+mat_brown <- rbind(
+  ISDS = gsva_tcga["ISDS", ord_brown],
+  MP17  = gsva_tcga["MP17", ord_brown],
+  MP18  = gsva_tcga["MP18", ord_brown],
+  KEGG  = gsva_tcga["KEGG", ord_brown],
+  assou  = gsva_tcga["assou", ord_brown],
+  wong  = gsva_tcga["wong", ord_brown],
+  plurinet  = gsva_tcga["plurinet", ord_brown],
+  benporath  = gsva_tcga["benporath", ord_brown]
 )
-mat_violet_scaled <- t(scale(t(mat_violet)))
+mat_brown_scaled <- t(scale(t(mat_brown)))
 
-labels_violet <- c(
-  sprintf("ISDS signature\nr = %.2f, p = %.1e", cor_isds_violet$estimate, cor_isds_violet$p.value),
-  sprintf("MP17 signature\nr = %.2f, p = %.1e", cor_mp17_violet$estimate, cor_mp17_violet$p.value),
-  sprintf("MP18 signature\nr = %.2f, p = %.1e", cor_mp18_violet$estimate, cor_mp18_violet$p.value),
-  sprintf("KEGG signature\nr = %.2f, p = %.1e", cor_kegg_violet$estimate, cor_kegg_violet$p.value),
-  sprintf("Assou signature\nr = %.2f, p = %.1e", cor_assou_violet$estimate, cor_assou_violet$p.value),
-  sprintf("Wong signature\nr = %.2f, p = %.1e", cor_wong_violet$estimate, cor_wong_violet$p.value),
-  sprintf("Plurinet signature\nr = %.2f, p = %.1e", cor_plurinet_violet$estimate, cor_plurinet_violet$p.value),
-  sprintf("Benporath signature\nr = %.2f, p = %.1e", cor_benporath_violet$estimate, cor_benporath_violet$p.value)
+labels_brown <- c(
+  sprintf("ISDS signature\nr = %.2f, p = %.1e", cor_isds_brown$estimate, cor_isds_brown$p.value),
+  sprintf("MP17 signature\nr = %.2f, p = %.1e", cor_mp17_brown$estimate, cor_mp17_brown$p.value),
+  sprintf("MP18 signature\nr = %.2f, p = %.1e", cor_mp18_brown$estimate, cor_mp18_brown$p.value),
+  sprintf("KEGG signature\nr = %.2f, p = %.1e", cor_kegg_brown$estimate, cor_kegg_brown$p.value),
+  sprintf("Assou signature\nr = %.2f, p = %.1e", cor_assou_brown$estimate, cor_assou_brown$p.value),
+  sprintf("Wong signature\nr = %.2f, p = %.1e", cor_wong_brown$estimate, cor_wong_brown$p.value),
+  sprintf("Plurinet signature\nr = %.2f, p = %.1e", cor_plurinet_brown$estimate, cor_plurinet_brown$p.value),
+  sprintf("Benporath signature\nr = %.2f, p = %.1e", cor_benporath_brown$estimate, cor_benporath_brown$p.value)
 )
 
 # ----------------------------
@@ -249,21 +249,21 @@ labels_violet <- c(
 
 heat_colors <- colorRampPalette(c("blue", "white", "red"))(100)
 
-# 📊 violet
-pheatmap(mat_violet_scaled,
+# 📊 brown
+pheatmap(mat_brown_scaled,
          cluster_cols = FALSE,
          cluster_rows = FALSE,
          show_colnames = FALSE,
          show_rownames = TRUE,
-         labels_row = labels_violet,
+         labels_row = labels_brown,
          fontsize_row = 9,
          color = heat_colors,
-         main = "VIOLET MODULE: CORRELATION WITH GENETIC SIGNATURES")
+         main = "brown MODULE:\n CORRELATION WITH GENETIC SIGNATURES")
 
 
 ## obtenemos los module eigengenes de los modulos de interes 
 
-modulos_interesCOR <- c("black", "brown", "pink","saddlebrown","tan","violet")
+modulos_interesCOR <- c("black", "blue", "greenyellow","saddlebrown")
 MEmodules <- paste0("ME",modulos_interesCOR)
 
 eigen_subset <- bwnet$MEs[,MEmodules]
@@ -278,7 +278,7 @@ plotEigengeneNetworks(eigen_subset,
                       plotDendrograms = TRUE, plotHeatmaps = FALSE,
                       colorLabels = TRUE, signed = TRUE,
                       
-                      plotAdjacency = FALSE)  # representar correlacion en vez de adyacencia 
+                      plotAdjacency = FALSE)  
 
 ## heatmap modulos de interés
 plotEigengeneNetworks(eigen_subset,
@@ -286,4 +286,4 @@ plotEigengeneNetworks(eigen_subset,
                       excludeGrey = TRUE, greyLabel = "grey",
                       plotDendrograms = FALSE, plotHeatmaps = TRUE,
                       colorLabels = TRUE, signed = TRUE,
-                      plotAdjacency = TRUE)  # representar correlacion en vez de adyacencia 
+                      plotAdjacency = FALSE)  # representar correlacion en vez de adyacencia 

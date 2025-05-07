@@ -17,7 +17,7 @@ load(file = "C:/Users/Suruxx/Documents/TFM/data/aurora_dataset.RData")
 # 1. Elección del umbral 
 ## -------------------------------------------------------------------------
 
-power <- c(c(1:10), seq(from = 12, to = 50, by = 2))
+power <- c(c(1:10), seq(from = 12, to = 30))
 
 # utilizamos la funcion pickSoftThreshold del paquete WGCNA
 # que analiza la similitud con una red topologica 
@@ -37,7 +37,7 @@ sft.data <- sft$fitIndices
 a1 <- ggplot(sft.data, aes(Power, SFT.R.sq, label = Power)) +
   geom_point() +
   geom_text(nudge_y = 0.1) +
-  geom_hline(yintercept = 0.90, color = 'red') +
+  geom_hline(yintercept = 0.85, color = 'red') +
   labs(x = 'Power', y = 'Scale free topology model fit, signed R^2') +
   theme_classic()
 
@@ -71,7 +71,7 @@ bwnet <- blockwiseModules(t(aurora_data),
                           verbose = 3)
 cor <- temp_cor
 
-save(bwnet, file = "C:/Users/Suruxx/Documents/TFM/data/AURORA_red.RData")
+save(bwnet, file = "C:/Users/Suruxx/Documents/TFM/data/AURORA_red6.RData")
 
 
 ## obtenemos el eigengene de cada módulo 
@@ -91,7 +91,7 @@ plotDendroAndColors(bwnet$dendrograms[[1]],
                     addGuide = TRUE,
                     hang= 0.03,
                     guideHang = 0.05,
-                    main = "Cluster Dendogram block 1")
+                    main = "Cluster Dendogram block 1 AURORA")
 
 plotDendroAndColors(bwnet$dendrograms[[2]], 
                     cbind(bwnet$unmergedColors[bwnet$blockGenes[[2]]], bwnet$colors[bwnet$blockGenes[[2]]]),
@@ -100,7 +100,7 @@ plotDendroAndColors(bwnet$dendrograms[[2]],
                     addGuide = TRUE,
                     hang= 0.03,
                     guideHang = 0.05,
-                    main = "Cluster Dendogram block 2")
+                    main = "Cluster Dendogram block 2 AURORA")
 
 plotDendroAndColors(bwnet$dendrograms[[3]], 
                     cbind(bwnet$unmergedColors[bwnet$blockGenes[[3]]], bwnet$colors[bwnet$blockGenes[[3]]]),
@@ -109,7 +109,7 @@ plotDendroAndColors(bwnet$dendrograms[[3]],
                     addGuide = TRUE,
                     hang= 0.03,
                     guideHang = 0.05,
-                    main = "Cluster Dendogram block 3")
+                    main = "Cluster Dendogram block 3 AURORA")
 plotDendroAndColors(bwnet$dendrograms[[4]], 
                     cbind(bwnet$unmergedColors[bwnet$blockGenes[[4]]], bwnet$colors[bwnet$blockGenes[[4]]]),
                     c("unmerged", "merged"),
@@ -117,7 +117,7 @@ plotDendroAndColors(bwnet$dendrograms[[4]],
                     addGuide = TRUE,
                     hang= 0.03,
                     guideHang = 0.05,
-                    main = "Cluster Dendogram block 4")
+                    main = "Cluster Dendogram block 4 AURORA")
 
 
 ## ------------------------------------------------------------------------
@@ -177,27 +177,22 @@ gsvapar <- gsvaParam(aurora_data, firmas)
 gsva_aurora <- gsva(gsvapar, verbose = FALSE)
 
 ## obtenemos los datos de expresión por cada módulo
-expr_bisque4 <- aurora_data[subset(modules_df$gene_id, modules_df$module == "bisque4"),]
+
 expr_black <- aurora_data[subset(modules_df$gene_id, modules_df$module == "black"),]
-expr_blue <- aurora_data[subset(modules_df$gene_id, modules_df$module == "blue"),]
-expr_blue4 <- aurora_data[subset(modules_df$gene_id, modules_df$module == "blue4"),]
 expr_brown <- aurora_data[subset(modules_df$gene_id, modules_df$module == "brown"),]
-expr_darkgreen <- aurora_data[subset(modules_df$gene_id, modules_df$module == "darkgreen"),]
-expr_darkmagenta <- aurora_data[subset(modules_df$gene_id, modules_df$module == "darkmagenta"),]
-expr_darkred <- aurora_data[subset(modules_df$gene_id, modules_df$module == "darkred"),]
-expr_darkseagreen4 <- aurora_data[subset(modules_df$gene_id, modules_df$module == "darkseagreen4"),]
-expr_darkturquoise <- aurora_data[subset(modules_df$gene_id, modules_df$module == "darkturquoise"),]
+expr_darkorange <- aurora_data[subset(modules_df$gene_id, modules_df$module == "darkorange"),]
 expr_green <- aurora_data[subset(modules_df$gene_id, modules_df$module == "green"),]
-expr_greenyellow <- aurora_data[subset(modules_df$gene_id, modules_df$module == "greenyellow"),]
+expr_honeydew1 <- aurora_data[subset(modules_df$gene_id, modules_df$module == "honeydew1"),]
+expr_lightcyan <- aurora_data[subset(modules_df$gene_id, modules_df$module == "lightcyan"),]
+expr_lightgreen <- aurora_data[subset(modules_df$gene_id, modules_df$module == "lightgreen"),]
+expr_lightslateblue <- aurora_data[subset(modules_df$gene_id, modules_df$module == "lightslateblue"),]
 expr_magenta <- aurora_data[subset(modules_df$gene_id, modules_df$module == "magenta"),]
-expr_maroon <- aurora_data[subset(modules_df$gene_id, modules_df$module == "maroon"),]
-expr_midnightblue <- aurora_data[subset(modules_df$gene_id, modules_df$module == "midnightblue"),]
-expr_pink <- aurora_data[subset(modules_df$gene_id, modules_df$module == "pink"),]
+expr_purple <- aurora_data[subset(modules_df$gene_id, modules_df$module == "purple"),]
+expr_red <- aurora_data[subset(modules_df$gene_id, modules_df$module == "red"),]
 expr_tan <- aurora_data[subset(modules_df$gene_id, modules_df$module == "tan"),]
-expr_turquoise <- aurora_data[subset(modules_df$gene_id, modules_df$module == "turquoise"),]
+expr_violet <- aurora_data[subset(modules_df$gene_id, modules_df$module == "violet"),]
 expr_yellow <- aurora_data[subset(modules_df$gene_id, modules_df$module == "yellow"),]
 expr_yellowgreen <- aurora_data[subset(modules_df$gene_id, modules_df$module == "yellowgreen"),]
-
 
 
 # se repiten los siguientes pasos para cada módulo: 
@@ -206,32 +201,32 @@ expr_yellowgreen <- aurora_data[subset(modules_df$gene_id, modules_df$module == 
 score_yellowgreen <- colMeans(expr_yellowgreen)
 
 ## Nos aseguramos que las muestras coincidan 
-common_samples <- intersect(names(score_yellowgreen), colnames(gsva_tcga))
+common_samples <- intersect(names(score_yellowgreen), colnames(gsva_aurora))
 
 ## calculamos la correlación con cada firma 
-cor_isds_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["ISDS", common_samples])
-cor_mp17_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["MP17", common_samples])
-cor_mp18_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["MP18", common_samples])
-cor_kegg_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["KEGG", common_samples])
+cor_isds_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["ISDS", common_samples])
+cor_mp17_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["MP17", common_samples])
+cor_mp18_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["MP18", common_samples])
+cor_kegg_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["KEGG", common_samples])
 
-cor_assou_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["assou", common_samples])
-cor_wong_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["wong", common_samples])
-cor_plurinet_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["plurinet", common_samples])
-cor_benporath_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_tcga["benporath", common_samples])
+cor_assou_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["assou", common_samples])
+cor_wong_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["wong", common_samples])
+cor_plurinet_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["plurinet", common_samples])
+cor_benporath_yellowgreen <- cor.test(score_yellowgreen[common_samples], gsva_aurora["benporath", common_samples])
 
 
 ## Matriz y heatmap 
 
 ord_yellowgreen <- order(score_yellowgreen, decreasing = TRUE)
 mat_yellowgreen <- rbind(
-  ISDS = gsva_tcga["ISDS", ord_yellowgreen],
-  MP17  = gsva_tcga["MP17", ord_yellowgreen],
-  MP18  = gsva_tcga["MP18", ord_yellowgreen],
-  KEGG  = gsva_tcga["KEGG", ord_yellowgreen],
-  assou  = gsva_tcga["assou", ord_yellowgreen],
-  wong  = gsva_tcga["wong", ord_yellowgreen],
-  plurinet  = gsva_tcga["plurinet", ord_yellowgreen],
-  benporath  = gsva_tcga["benporath", ord_yellowgreen]
+  ISDS = gsva_aurora["ISDS", ord_yellowgreen],
+  MP17  = gsva_aurora["MP17", ord_yellowgreen],
+  MP18  = gsva_aurora["MP18", ord_yellowgreen],
+  KEGG  = gsva_aurora["KEGG", ord_yellowgreen],
+  assou  = gsva_aurora["assou", ord_yellowgreen],
+  wong  = gsva_aurora["wong", ord_yellowgreen],
+  plurinet  = gsva_aurora["plurinet", ord_yellowgreen],
+  benporath  = gsva_aurora["benporath", ord_yellowgreen]
 )
 mat_yellowgreen_scaled <- t(scale(t(mat_yellowgreen)))
 
@@ -252,7 +247,7 @@ labels_yellowgreen <- c(
 
 heat_colors <- colorRampPalette(c("blue", "white", "red"))(100)
 
-# 📊 YELLOWGREEN
+# 📊 yellowgreen
 pheatmap(mat_yellowgreen_scaled,
          cluster_cols = FALSE,
          cluster_rows = FALSE,
@@ -266,7 +261,7 @@ pheatmap(mat_yellowgreen_scaled,
 
 ## obtenemos los module eigengenes de los modulos de interes 
 
-modulos_interesCOR <- c("blue4", "brown", "darkmagenta","darkseagreen4","greenyellow","maroon","yellow","yellowgreen")
+modulos_interesCOR <- c("black", "brown", "darkorange","honeydew1","lightslateblue","violet","yellow","yellowgreen")
 MEmodules <- paste0("ME",modulos_interesCOR)
 
 eigen_subset <- bwnet$MEs[,MEmodules]
@@ -289,4 +284,4 @@ plotEigengeneNetworks(eigen_subset,
                       excludeGrey = TRUE, greyLabel = "grey",
                       plotDendrograms = FALSE, plotHeatmaps = TRUE,
                       colorLabels = TRUE, signed = TRUE,
-                      plotAdjacency = TRUE)  # representar correlacion en vez de adyacencia 
+                      plotAdjacency = FALSE)  # representar correlacion en vez de adyacencia 
