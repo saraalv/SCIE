@@ -134,9 +134,11 @@ plotDendroAndColors(bwnet$dendrograms[[5]],
 ## ------------------------------------------------------------------------
 
 ## creamos un dataframe con cada uno de los genes y el modulo al que pertenece 
-modules_df <- as.data.frame(bwnet$colors)
-modules_df <- cbind(names(bwnet$colors),modules_df)
-colnames(modules_df) <- c("gene_id", "module")
+modules_df_tcga <- as.data.frame(bwnet$colors)
+modules_df_tcga <- cbind(names(bwnet$colors),modules_df_tcga)
+colnames(modules_df_tcga) <- c("gene_id", "module")
+
+save(modules_df_tcga, file = "C:/Users/Suruxx/Documents/TFM/data/modulos_df_tcga.RData")
 
 ## Mantenemos los modulos que contengan al menos 20 genes de firmas stem o inmune
 
@@ -244,7 +246,7 @@ labels_brown <- c(
 )
 
 # ----------------------------
-# 9. Colores y plots
+# 5. Colores y plots
 # ----------------------------
 
 heat_colors <- colorRampPalette(c("blue", "white", "red"))(100)
@@ -264,12 +266,13 @@ pheatmap(mat_brown_scaled,
 ## obtenemos los module eigengenes de los modulos de interes 
 
 modulos_interesCOR <- c("black", "blue", "greenyellow","saddlebrown")
-MEmodules <- paste0("ME",modulos_interesCOR)
+MEmodules_tcga <- paste0("ME",modulos_interesCOR)
 
-eigen_subset <- bwnet$MEs[,MEmodules]
+eigen_subset <- bwnet$MEs[,MEmodules_tcga]
 
-
-## Correlacion entre los modulos de interés
+## -------------------------------------------------------------------
+# 6. Correlación entre los módulos de interés
+## --------------------------------------------------------------------
 
 ##dendograma modulos de interés
 plotEigengeneNetworks(eigen_subset,
@@ -287,3 +290,6 @@ plotEigengeneNetworks(eigen_subset,
                       plotDendrograms = FALSE, plotHeatmaps = TRUE,
                       colorLabels = TRUE, signed = TRUE,
                       plotAdjacency = FALSE)  # representar correlacion en vez de adyacencia 
+
+save(gsva_tcga, MEmodules_tcga,expr_black,expr_blue,expr_greenyellow, expr_saddlebrown,
+     file = "C:/Users/Suruxx/Documents/TFM/data/TCGA_MODULOS.RData")
